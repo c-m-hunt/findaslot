@@ -3,15 +3,18 @@ import moment from 'moment';
 import logger from './../logger';
 import { Slot } from './../types';
 import { Supermarket } from './base';
+import { Notifier } from '../notifier/base';
 
-export class Iceland extends Supermarket {
+export class Iceland <T extends Notifier>extends Supermarket<T> {
   username: string;
   password: string;
+  refresh: number;
 
-  constructor(username: string, password: string) {
-    super();
+  constructor(username: string, password: string, notifier: T, refresh: number = 30) {
+    super(notifier);
     this.username = username;
     this.password = password;
+    this.refresh = refresh * 1000;
   }
 
   run = async () => {
@@ -42,8 +45,8 @@ export class Iceland extends Supermarket {
         }
       }
     }
-    logger.debug(`Waiting for 30 seconds and then will try again`);
-    await page.waitFor(30000);
+    logger.debug(`Waiting for ${this.refresh / 1000} seconds and then will try again`);
+    await page.waitFor(this.refresh);
     await page.reload();
     await this.checkSlots(page);
   }
@@ -81,6 +84,15 @@ export class Iceland extends Supermarket {
         for (let j = 0; j < slotNodes.length; j ++) {
           const slotNode = slotNodes[j];
           const available = !slotNode.classList.contains('unavailable')
+
+          if (available) {
+            const takeSlot = slotNode.querySelector('.delivery-schedule-options button');
+            if (takeSlot) {
+              //@ts-ignore
+              takeSlot.click();
+            }
+          }
+
           // @ts-ignore
           const time = slotNode.querySelector('.delivery-schedule-slot-range div').innerText;
           slots.push({
