@@ -39,7 +39,7 @@ export class Iceland <T extends Notifier>extends Supermarket<T> {
         table.push([slot.date, time.time, time.available ? 'Available' : `Not available`]);
         if (time.available) {
           this.foundSlot(`Slot available for ${this.username}`, `Check ${time.time} slot on ${slot.date}`);
-          Promise.resolve();
+          return;
         }
       }
     }
@@ -80,15 +80,17 @@ export class Iceland <T extends Notifier>extends Supermarket<T> {
         const slotNodes = dayNodes[i].querySelectorAll(slotContainerSelector)
 
         const slots = [];
+        let slotBooked = false;
         for (let j = 0; j < slotNodes.length; j ++) {
           const slotNode = slotNodes[j];
           const available = !slotNode.classList.contains('unavailable')
 
           if (available) {
             const takeSlot = slotNode.querySelector('.delivery-schedule-options button');
-            if (takeSlot) {
+            if (takeSlot && !slotBooked) {
               //@ts-ignore
               takeSlot.click();
+              slotBooked = true;
             }
           }
 
