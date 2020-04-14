@@ -4,7 +4,7 @@ import { Notifier } from './base';
 
 export class Pushover extends Notifier {
   users: string[];
-  client: any;
+  client: Push;
   constructor(token: string, users: string[]) {
     super();
     this.users = users;
@@ -16,7 +16,7 @@ export class Pushover extends Notifier {
 
   send = async(title: string, message: string): Promise<void> => {
     logger.debug("Sending message");
-    let msg = {
+    const msg = {
       user: '',
       message,
       title,
@@ -24,7 +24,7 @@ export class Pushover extends Notifier {
       device: 'devicename',
       priority: 1
     }
-    for (let u of this.users) {
+    for (const u of this.users) {
       msg.user = u;
       this.client.send( msg, ( err, result ) => {
         if ( err ) {

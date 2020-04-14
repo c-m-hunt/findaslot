@@ -8,9 +8,9 @@ export class Supermarket<T extends Notifier> {
     this.notifier = options.notifier;
   }
 
-  foundSlot = (title, msg) => {
+  foundSlot = async (title: string, msg: string): Promise<void> => {
     beep([500, 500, 500, 500, 500, 500])
-    this.notifier.send(title, msg);
+    await this.notifier.send(title, msg);
   }
 }
 

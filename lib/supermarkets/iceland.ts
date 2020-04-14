@@ -3,7 +3,7 @@ import moment from 'moment';
 import logger from './../logger';
 import { Slot } from './../types';
 import { SupermarketOptions } from './types';
-import { Supermarket, defaultOptions } from './base';
+import { Supermarket } from './base';
 import { Notifier } from '../notifier/base';
 
 export class Iceland <T extends Notifier>extends Supermarket<T> {
@@ -18,7 +18,7 @@ export class Iceland <T extends Notifier>extends Supermarket<T> {
     this.refresh = options.refresh * 1000;
   }
 
-  run = async () => {
+  run = async (): Promise<void> => {
     logger.debug(`Creating browser and launching`);
     const browser = await puppeteer.launch({
       headless: false,
@@ -30,7 +30,7 @@ export class Iceland <T extends Notifier>extends Supermarket<T> {
     await this.checkSlots(page);
   };
 
-  checkSlots = async (page: Page) => {
+  checkSlots = async (page: Page): Promise<void> => {
     logger.debug(`Checking slots`)
     const slots = await this.getSlots(page);
     for (const slot of slots) {
@@ -60,7 +60,7 @@ export class Iceland <T extends Notifier>extends Supermarket<T> {
     const slots = await page.evaluate(() => {
       const slotsContainerSelector = '.delivery-schedule-slots';  
       const slotContainerSelector = '.delivery-schedule-slot';
-      const getAttribute = (name, node) => {
+      const getAttribute = (name, node): string | null => {
         if (node.hasAttributes()) {
           const attrs = node.attributes;
           for(let i = 0; i < attrs.length; i++) {
@@ -76,10 +76,10 @@ export class Iceland <T extends Notifier>extends Supermarket<T> {
       const dayNodes = document.querySelectorAll(slotsContainerSelector);
 
       for (let i = 0; i < dayNodes.length; i ++) {
-        let dateName = getAttribute('data-slots-key', dayNodes[i]);
-        let slotNodes = dayNodes[i].querySelectorAll(slotContainerSelector)
+        const dateName = getAttribute('data-slots-key', dayNodes[i]);
+        const slotNodes = dayNodes[i].querySelectorAll(slotContainerSelector)
 
-        let slots = [];
+        const slots = [];
         for (let j = 0; j < slotNodes.length; j ++) {
           const slotNode = slotNodes[j];
           const available = !slotNode.classList.contains('unavailable')

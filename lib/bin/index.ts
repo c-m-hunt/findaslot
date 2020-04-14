@@ -43,7 +43,7 @@ const questions = [
   }
 ];
 
-const askQuestions = async () => {
+const askQuestions = async (): Promise<Answers> => {
   clear();
   const title = await figletProm('FindASlot');
   console.log(title);

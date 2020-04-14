@@ -3,5 +3,5 @@ export interface Slot {
   slots: {
     time: string;
     available: boolean;
-  }[]
+  }[];
 }
