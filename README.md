@@ -2,8 +2,13 @@
 Currently only Iceland supported
 
 ## Install
+Clone this repo and navigate to the root.
 ```
 yarn global add file:$PWD
+```
+or
+```
+npm install -g .
 ```
 
 ## Run
@@ -13,7 +18,9 @@ findaslot
 and follow the prompts.
 
 ## Enable notifier
-Pushover (https://pushover.net/) is enabled.
+With no notifier set, your terminal will alert. Pushover enables alerts to be sent to your phone.
+
+Pushover (https://pushover.net/) is enabled when user and token are set.
 
 Set environment variables `PUSHOVER_USER` and `PUSHOVER_TOKEN`
 
