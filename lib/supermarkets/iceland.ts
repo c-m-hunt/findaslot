@@ -1,5 +1,6 @@
 import puppeteer, { Page, Browser } from 'puppeteer';
 import moment from 'moment';
+import Table from 'cli-table';
 import logger from './../logger';
 import { Slot } from './../types';
 import { SupermarketOptions } from './types';
@@ -32,17 +33,17 @@ export class Iceland <T extends Notifier>extends Supermarket<T> {
   checkSlots = async (page: Page): Promise<void> => {
     logger.debug(`Checking slots`)
     const slots = await this.getSlots(page);
+    const table = new Table({ head: ['Date', 'Time', 'Available']})
     for (const slot of slots) {
-      console.log(`------------------------------------------`);
-      console.log(`${slot.date}`)
       for (const time of slot.slots) {
-        console.log(`${time.time}        ${time.available ? 'Available' : `Not available`}`);
+        table.push([slot.date, time.time, time.available ? 'Available' : `Not available`]);
         if (time.available) {
           this.foundSlot(`Slot available for ${this.username}`, `Check ${time.time} slot on ${slot.date}`);
           Promise.resolve();
         }
       }
     }
+    console.log(table.toString());
     this.countdown();
     await page.waitFor(this.refresh);
     await page.reload();
