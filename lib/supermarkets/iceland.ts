@@ -6,16 +6,15 @@ import { SupermarketOptions } from './types';
 import { Supermarket } from './base';
 import { Notifier } from '../notifier/base';
 
+
 export class Iceland <T extends Notifier>extends Supermarket<T> {
   username: string;
   password: string;
-  refresh: number;
 
   constructor(username: string, password: string, options: SupermarketOptions<T>) {
     super(options);
     this.username = username;
     this.password = password;
-    this.refresh = options.refresh * 1000;
   }
 
   run = async (): Promise<void> => {
@@ -44,7 +43,7 @@ export class Iceland <T extends Notifier>extends Supermarket<T> {
         }
       }
     }
-    logger.debug(`Waiting for ${this.refresh / 1000} seconds and then will try again`);
+    this.countdown();
     await page.waitFor(this.refresh);
     await page.reload();
     await this.checkSlots(page);
