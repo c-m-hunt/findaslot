@@ -1,10 +1,11 @@
 import beep from 'beepbeep';
 import { Notifier } from '../notifier/base';
+import { SupermarketOptions } from './types';
 
 export class Supermarket<T extends Notifier> {
   notifier: T ;
-  constructor(notifier: T) {
-    this.notifier = notifier;
+  constructor(options: SupermarketOptions<T>) {
+    this.notifier = options.notifier;
   }
 
   foundSlot = (title, msg) => {

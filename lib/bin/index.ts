@@ -7,6 +7,7 @@ import { promisify } from 'util';
 import { Iceland } from '../supermarkets';
 import { Pushover } from '../notifier/pushover';
 import { Notifier } from '../notifier/base';
+import { SupermarketOptions } from '../supermarkets/types';
 
 const figletProm = promisify(figlet);
 
@@ -53,15 +54,12 @@ askQuestions()
   .then(answers => {
     const user = process.env['PUSHOVER_USER'];
     const token = process.env['PUSHOVER_TOKEN'];
-  
-    let notifier
-    if (user && token) {
-      notifier = new Pushover(token, [user]); 
-    } else {
-      notifier = new Notifier();
+    const options: SupermarketOptions<Notifier> = {
+      refresh: answers.refresh,
+      notifier: user && token ? new Pushover(token, [user]) : new Notifier()
     }
     if (answers.supermarket === 'Iceland') {
-      const i = new Iceland(answers.username, answers.password, notifier, 10);
+      const i = new Iceland(answers.username, answers.password, options);
       i.run();
     }
   })

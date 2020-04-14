@@ -2,6 +2,7 @@ import puppeteer, { Page, Browser } from 'puppeteer';
 import moment from 'moment';
 import logger from './../logger';
 import { Slot } from './../types';
+import { SupermarketOptions } from './types';
 import { Supermarket } from './base';
 import { Notifier } from '../notifier/base';
 
@@ -10,20 +11,18 @@ export class Iceland <T extends Notifier>extends Supermarket<T> {
   password: string;
   refresh: number;
 
-  constructor(username: string, password: string, notifier: T, refresh: number = 30) {
-    super(notifier);
+  constructor(username: string, password: string, options: SupermarketOptions<T>) {
+    super(options);
     this.username = username;
     this.password = password;
-    this.refresh = refresh * 1000;
+    this.refresh = options.refresh * 1000;
   }
 
   run = async () => {
     logger.debug(`Creating browser and launching`);
     const browser = await puppeteer.launch({
       headless: false,
-      defaultViewport: {
-        width: 1200, height: 800
-      }
+      defaultViewport: null
     });
     logger.debug(`Heading to page and logging in`);
     const page = await this.setup(browser);
