@@ -1,4 +1,5 @@
 import beep from 'beepbeep';
+import puppeteer, { Page, Browser } from 'puppeteer';
 import { Notifier } from '../notifier/base';
 import { SupermarketOptions } from './types';
 import { Spinner } from 'clui';
@@ -6,10 +7,23 @@ import { Spinner } from 'clui';
 export class Supermarket<T extends Notifier> {
   notifier: T ;
   refresh: number;
+  browser?: Browser;
 
-  constructor(options: SupermarketOptions<T>) {
+  browserOptions: puppeteer.LaunchOptions = {
+    headless: false,
+    defaultViewport: null
+  }
+
+  constructor(options: SupermarketOptions<T>, browserOptions?: puppeteer.LaunchOptions) {
     this.notifier = options.notifier;
     this.refresh = options.refresh * 1000;
+    this.browserOptions = { ...this.browserOptions, ...browserOptions };
+  }
+
+  setup = async(): Promise<Page> => {
+    this.browser = await puppeteer.launch(this.browserOptions);
+    const page = await this.browser.newPage();
+    return page
   }
 
   foundSlot = async (title: string, msg: string): Promise<void> => {

@@ -1,4 +1,4 @@
-import puppeteer, { Page, Browser } from 'puppeteer';
+import puppeteer, { Page } from 'puppeteer';
 import moment from 'moment';
 import Table from 'cli-table';
 import logger from './../logger';
@@ -12,20 +12,17 @@ export class Iceland <T extends Notifier>extends Supermarket<T> {
   username: string;
   password: string;
 
-  constructor(username: string, password: string, options: SupermarketOptions<T>) {
-    super(options);
+  constructor(username: string, password: string, options: SupermarketOptions<T>, browserOptions?: puppeteer.LaunchOptions) {
+    super(options, browserOptions);
     this.username = username;
     this.password = password;
   }
 
   run = async (): Promise<void> => {
     logger.debug(`Creating browser and launching`);
-    const browser = await puppeteer.launch({
-      headless: false,
-      defaultViewport: null
-    });
+    const page = await this.setup();
     logger.debug(`Heading to page and logging in`);
-    const page = await this.setup(browser);
+    await page.goto('https://www.iceland.co.uk/book-delivery');
     await this.signIn(page);
     await this.checkSlots(page);
   };
@@ -48,12 +45,6 @@ export class Iceland <T extends Notifier>extends Supermarket<T> {
     await page.waitFor(this.refresh);
     await page.reload();
     await this.checkSlots(page);
-  }
-
-  setup = async(browser: Browser): Promise<Page> => {
-    const page = await browser.newPage();
-    await page.goto('https://www.iceland.co.uk/book-delivery');
-    return page
   }
 
   getSlots = async(page: Page): Promise<Slot[]> => {
