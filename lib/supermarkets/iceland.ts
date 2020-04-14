@@ -3,7 +3,7 @@ import moment from 'moment';
 import logger from './../logger';
 import { Slot } from './../types';
 import { SupermarketOptions } from './types';
-import { Supermarket } from './base';
+import { Supermarket, defaultOptions } from './base';
 import { Notifier } from '../notifier/base';
 
 export class Iceland <T extends Notifier>extends Supermarket<T> {

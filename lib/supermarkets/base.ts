@@ -12,4 +12,9 @@ export class Supermarket<T extends Notifier> {
     beep([500, 500, 500, 500, 500, 500])
     this.notifier.send(title, msg);
   }
-} 
+}
+
+export const defaultOptions: SupermarketOptions<Notifier> = {
+  refresh: 60,
+  notifier: new Notifier()
+}

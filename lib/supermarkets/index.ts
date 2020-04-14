@@ -1,5 +1,7 @@
 import { Iceland } from './iceland';
+import { defaultOptions } from './base';
 
 export {
-  Iceland
+  Iceland,
+  defaultOptions
 }
