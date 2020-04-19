@@ -1,4 +1,4 @@
-import { Iceland } from './supermarkets';
+import { Iceland, Ocado } from './supermarkets';
 import { Notifier } from './notifier/base';
 import { Pushover } from './notifier/pushover';
 import { SupermarketOptions } from './supermarkets/types';
@@ -24,6 +24,10 @@ const options: SupermarketOptions<Notifier> = {
   refresh: 20,
   notifier
 }
+
+// const i = new Ocado(username, password, options);
+// i.run();
+
 
 const i = new Iceland(username, password, options);
 i.run();
