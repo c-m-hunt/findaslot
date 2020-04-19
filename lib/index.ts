@@ -15,13 +15,13 @@ const token = process.env['PUSHOVER_TOKEN'];
 
 let notifier
 if (user && token) {
-  notifier = new Pushover(token, [user]);
+  notifier = new Pushover(token, user.split(','));
 } else {
   notifier = new Notifier();
 }
 
 const options: SupermarketOptions<Notifier> = {
-  refresh: 10,
+  refresh: 20,
   notifier
 }
 
