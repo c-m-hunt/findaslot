@@ -2,7 +2,7 @@ import puppeteer, { Page } from 'puppeteer';
 import moment from 'moment';
 import Table from 'cli-table';
 import logger from './../logger';
-import { Slot } from './../types';
+import { Slot, SlotTime } from './../types';
 import { SupermarketOptions } from './types';
 import { Supermarket } from './base';
 import { Notifier } from '../notifier/base';
@@ -31,16 +31,18 @@ export class Iceland <T extends Notifier>extends Supermarket<T> {
     logger.debug(`Checking slots`)
     const slots = await this.getSlots(page);
     const table = new Table({ head: ['Date', 'Time', 'Available']})
+    let found: { slot: Slot; time: SlotTime } | null = null
     for (const slot of slots) {
       for (const time of slot.slots) {
         table.push([slot.date, time.time, time.available ? 'Available' : `Not available`]);
-        if (time.available) {
-          this.foundSlot(`Slot available for ${this.username}`, `Check ${time.time} slot on ${slot.date}`);
-          return;
-        }
+        found = { slot, time }
       }
     }
     console.log(table.toString());
+    if (found) {
+      await this.foundSlot(`Slot available for ${this.username}`, `Check ${found.time.time} slot on ${found.slot.date}`);
+      return;
+    }
     this.countdown();
     await page.waitFor(this.refresh);
     await page.reload();
